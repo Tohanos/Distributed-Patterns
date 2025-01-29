@@ -2,8 +2,6 @@ package stability
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"log"
 	"time"
 )
@@ -27,22 +25,4 @@ func Retry(effector Effector, retries int, delay time.Duration) Effector {
 			}
 		}
 	}
-}
-
-var count int
-
-func EmulateTransientError(ctx context.Context) (string, error) {
-	count++
-
-	if count <= 3 {
-		return "intentional fail", errors.New("error")
-	} else {
-		return "success", nil
-	}
-}
-
-func main() {
-	r := Retry(EmulateTransientError, 5, 2*time.Second)
-	res, err := r(context.Background())
-	fmt.Println(res, err)
 }
